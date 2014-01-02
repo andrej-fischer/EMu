@@ -40,15 +40,15 @@ Optional:
                   
 # EMu output files:
 
-`^[pre]_[Nsp]_ml_spectra.txt`      - The spectra found in the data using EM (Nspectra x Nchannels matrix)
-`^[pre]_[Nsp]_map_activities.txt`  - The activities found in the data using EM (Nsamples x Nspectra matrix)
-`^[pre]_[Nsp]_assigned.txt`        - The mutations assigned to each process (Nsamples x Nspectra matrix).
-`^[pre]_bic.txt`                   - The BIC values for the number of spectra tried.
+* `^[pre]_[Nsp]_ml_spectra.txt`      - The spectra found in the data using EM (Nspectra x Nchannels matrix)
+* `^[pre]_[Nsp]_map_activities.txt`  - The activities found in the data using EM (Nsamples x Nspectra matrix)
+* `^[pre]_[Nsp]_assigned.txt`        - The mutations assigned to each process (Nsamples x Nspectra matrix).
+* `^[pre]_bic.txt`                   - The BIC values for the number of spectra tried.
 
 If MCMC was called:
-`^[pre]_[Nsp]_mcmc_spectra.txt`     - The posterior mean spectra found in the data using MCMC (Nspectra x Nchannels matrix)
-`^[pre]_[Nsp]_mcmc_activities.txt`  - The posterior mean activities found in the data using MCMC (Nsamples x Nspectra matrix)
-`^[pre]_[Nsp]_mcmc_err.txt`         - The posterior std.dev. for the spectra using MCMC (Nspectra x Nchannels matrix)
+* `^[pre]_[Nsp]_mcmc_spectra.txt`     - The posterior mean spectra found in the data using MCMC (Nspectra x Nchannels matrix)
+* `^[pre]_[Nsp]_mcmc_activities.txt`  - The posterior mean activities found in the data using MCMC (Nsamples x Nspectra matrix)
+* `^[pre]_[Nsp]_mcmc_err.txt`         - The posterior std.dev. for the spectra using MCMC (Nspectra x Nchannels matrix)
 
 
 # EMu-prepare usage
@@ -114,4 +114,5 @@ NOTE: In order to translate mutations to the 96 channels, `EMu-prepare` reads th
 
 There is a known bug when openMP is compiled with the Mac OS compiler gcc version 4.2.1, which leads to random `abort trap:6` crashes. If possible, compile with latest gcc version. Alternatively, you can set the number of threads manually to one via:
 
-`export OMP_NUM_THREADS=1; ./EMu --mut 21_breast_cancers.mutations --opp 21_breast_cancers.opportunity --pre ./target/test`
+`export OMP_NUM_THREADS=1; ./EMu --mut 21_breast_cancers.mutations\
+ --opp 21_breast_cancers.opportunity --pre ./target/test`

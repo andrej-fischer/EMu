@@ -1,20 +1,20 @@
-[1.] Compilation
+# Compilation
 
 To compile EMu, you need to fulfill the following dependencies:
 
-- A C++ compiler, such as g++. 
-- An installation of the GNU scientific library (v14 or later). You can point to the directory of a local installation in the makefile.
-- The software uses openMP. If you do not wish to use openMP, comment out the corresponding lines in MutSpecEM.cpp and in the Makefile.
+* A C++ compiler, such as g++. 
+* An installation of the GNU scientific library (v14 or later). You can point to the directory of a local installation in the makefile.
+* The software uses openMP. If you do not wish to use openMP, comment out the corresponding lines in MutSpecEM.cpp and in the Makefile.
 
-To compile EMu, change the include (-I) and library (-L) paths in the Makefile to point to the local installation of gsl, if they are not in /usr/local/ (e.g. if you don't have admin rights), and then simply type 'make' on the command line, while in the source file directory. 
+To compile EMu, change the include (-I) and library (-L) paths in the Makefile to point to the local installation of gsl, if they are not in `/usr/local/` (e.g. if you don't have admin rights), and then simply type 'make' on the command line, while in the source file directory. 
 
-[2.] EMu usage
+# EMu usage
 
-The main executable is called EMu. Typical EMu usage:
+The main executable is called `EMu`. Typical `EMu` usage:
 
-./EMu --mut 21_breast_cancers.mutations --opp 21_breast_cancers.opportunity --pre ./target/test [--mcmc 1.0e5 --force 4]
+`./EMu --mut 21_breast_cancers.mutations --opp 21_breast_cancers.opportunity --pre ./target/test [--mcmc 1.0e5 --force 4]`
 
-The directory ./target/ must exist. It will not be created.
+The directory `./target/` must exist. It will not be created.
 
 Command line arguments: 
 
@@ -38,7 +38,7 @@ Optional:
 	  	 activities per sample. Needs to be a (M x Nspectra) matrix, where Nsamples in --mut and --opp 
 		 needs to be a multiple of M.
                   
-Output files:
+# EMu Output files:
 
 ^[pre]_[Nsp]_ml_spectra.txt      - The spectra found in the data using EM (Nspectra x Nchannels matrix)
 ^[pre]_[Nsp]_map_activities.txt  - The activities found in the data using EM (Nsamples x Nspectra matrix)
@@ -51,7 +51,7 @@ If MCMC was called:
 ^[pre]_[Nsp]_mcmc_err.txt         - The posterior std.dev. for the spectra using MCMC (Nspectra x Nchannels matrix)
 
 
-[3.] EMu-prepare usage
+# EMu-prepare usage
 
 There is an additional program provided to create the input files for EMu: EMu-prepare
 
@@ -94,22 +94,24 @@ Command line arguments for EMu-prepare:
 	    
 	    chromosome start stop
 
-Output files: assuming EMu-prepare was called with --cnv cnv.txt --mut mutations.txt:
+# EMu-prepare Output files
 
-mutations.txt.96: The same as mutations.txt with the mutation channel appended at the end of each line.
-mutations.txt.mut.matrix: A matrix of mutation counts with no. samples rows and 96 columns. Suitable for EMu.
-mutations.txt.mut.samples: The samples corresponding to each row in above file.
+Assuming EMu-prepare was called with --cnv cnv.txt --mut mutations.txt:
 
-cnv.txt.opp.matrix: A matrix of opportunity counts with no. samples rows and 96 columns. Suitable for EMu.
-cnv.txt.opp.sample: The samples corresponding to each row in above file. 
+* mutations.txt.96: The same as mutations.txt with the mutation channel appended at the end of each line.
+* mutations.txt.mut.matrix: A matrix of mutation counts with no. samples rows and 96 columns. Suitable for EMu.
+* mutations.txt.mut.samples: The samples corresponding to each row in above file.
+
+* cnv.txt.opp.matrix: A matrix of opportunity counts with no. samples rows and 96 columns. Suitable for EMu.
+* cnv.txt.opp.sample: The samples corresponding to each row in above file. 
 		    Check that this is the same order as in mutations.txt.mut.samples.
 
 NOTE: In order to translate mutations to the 96 channels, EMu-prepare reads the bases 5' and 3' to the one given in a line of mutations.txt from the hard disk. It is very useful to sort the mutations file by chromosome and coordinate (otherwise the most time will be spent moving between physical locations in the hard disk). On UNIX, this can be achieved with:
 
 sort -k2n,2 -k3n,3 mutations.txt > mutations.sorted.txt
 
-[4.] KNOWN BUGS
+# KNOWN BUGS
 
-There is a known bug when openMP is compiled with the Mac OS compiler gcc version 4.2.1, which leads to random "abort trap:6" crashes. If possible, compile with latest gcc version. Alternatively, you can set the number of threads manually to one via:
+There is a known bug when openMP is compiled with the Mac OS compiler gcc version 4.2.1, which leads to random `abort trap:6` crashes. If possible, compile with latest gcc version. Alternatively, you can set the number of threads manually to one via:
 
-export OMP_NUM_THREADS=1; ./EMu --mut 21_breast_cancers.mutations --opp 21_breast_cancers.opportunity --pre ./target/test
+`export OMP_NUM_THREADS=1; ./EMu --mut 21_breast_cancers.mutations --opp 21_breast_cancers.opportunity --pre ./target/test`

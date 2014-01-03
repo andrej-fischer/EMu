@@ -10,7 +10,7 @@ PREPARE        	= EMu-prepare
 OBJECTS         = $(MODEL).o $(MAIN).o
 #
 all:  $(OBJECTS) $(PREPARE).o
-	$(CC) $(CC_FLAGS) $(OBJECTS) -o $(MAIN) $(LD_FLAGS)
+	$(CC) $(CC_FLAGS) $(OBJECTS) -o ./build/$(MAIN) $(LD_FLAGS)
 	rm -f *.o
 #
 $(PREPARE).o: $(PREPARE).cpp

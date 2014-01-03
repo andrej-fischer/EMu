@@ -114,5 +114,4 @@ NOTE: In order to translate mutations to the 96 channels, `EMu-prepare` reads th
 
 There is a known bug when openMP is compiled with the Mac OS compiler gcc version 4.2.1, which leads to random `abort trap:6` crashes. If possible, compile with latest gcc version. Alternatively, you can set the number of threads manually to one via:
 
-`export OMP_NUM_THREADS=1; ./EMu --mut 21_breast_cancers.mutations\
- --opp 21_breast_cancers.opportunity --pre ./target/test`
+`export OMP_NUM_THREADS=1; ./EMu --mut 21_breast_cancers.mutations --opp 21_breast_cancers.opportunity --pre ./target/test`

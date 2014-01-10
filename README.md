@@ -1,20 +1,26 @@
+# EMu stable release
+
+The current stable release, including a pre-compiled executable of EMu for Mac OS X (64bit), can be found on our [ftp](ftp://ftp.sanger.ac.uk/pub/teams/153/EMu/) site at: 
+
+`ftp://ftp.sanger.ac.uk/pub/teams/153/EMu/`
+
+# Test EMu
+
+The main executable is called `EMu`. To test `EMu` type:
+
+`$ ./EMu --mut 21_breast_cancers.mutations --opp 21_breast_cancers.opportunity --pre ./test`
+
 # Compilation
 
-To compile EMu, you need to fulfill the following dependencies:
+To compile EMu yourself, you need to fulfill the following dependencies:
 
 * A C++ compiler, such as g++. 
-* An installation of the GNU scientific library (v14 or later). You can point to the directory of a local installation in the makefile.
+* An installation of the GNU scientific library (v14 or later).
 * The software uses openMP. If you do not wish to use openMP, comment out the corresponding lines in MutSpecEM.cpp and in the Makefile.
 
-To compile EMu, change the include (-I) and library (-L) paths in the Makefile to point to the local installation of gsl, if they are not in `/usr/local/` (e.g. if you don't have admin rights), and then simply type 'make' on the command line, while in the source file directory. 
+[If you try to compile EMu on a machine without admin rights, you might need to change the paths in the Makefile to point to your local installation of gsl, if they are not in `/usr/local/`. Then simply type 'make' on the command line, while in the source file directory.]
 
 # EMu usage
-
-The main executable is called `EMu`. Typical `EMu` usage:
-
-`./EMu --mut 21_breast_cancers.mutations --opp 21_breast_cancers.opportunity --pre ./target/test [--mcmc 1.0e5 --force 4]`
-
-The directory `./target/` must exist. It will not be created.
 
 Command line arguments: 
 

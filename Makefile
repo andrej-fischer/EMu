@@ -1,9 +1,7 @@
 CC              = g++-mp-4.7
-INCL            = /Users/af7/local/include/
-LIB             = /Users/af7/local/lib/
-#
-CC_FLAGS        = -Wall -O3 -I$(INCL) -DHAVE_INLINE -fopenmp
-LD_FLAGS	= -L$(LIB) -lm -lgsl -lgslcblas -fopenmp
+GSL		= /opt/local/lib/libgsl.a /opt/local/lib/libgslcblas.a
+CC_FLAGS	= -Wall -O3 -DHAVE_INLINE -fopenmp 
+LD_FLAGS	= ${GSL} -fopenmp
 MAIN            = EMu
 MODEL		= MutSpecEM
 PREPARE        	= EMu-prepare

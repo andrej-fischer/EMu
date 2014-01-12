@@ -8,7 +8,7 @@ The current stable release, including a pre-compiled executable of EMu for Mac O
 
 The main executable is called `EMu`. To test `EMu` type:
 
-`$ ./EMu --mut 21_breast_cancers.mutations --opp 21_breast_cancers.opportunity --pre ./test`
+`$ ./build/EMu --mut 21_breast_cancers.mutations --opp 21_breast_cancers.opportunity --pre ./test`
 
 # Compilation
 

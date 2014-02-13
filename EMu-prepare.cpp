@@ -168,7 +168,7 @@ void get_opts( int argc, const char ** argv, cmdl_opts& opts){
   opts.mut_file_name = NULL;
   opts.cnv_file_name = NULL;
   opts.chr_dir       = NULL;
-  opts.pre           = NULL;
+  opts.pre           = "out";
   opts.suff          = NULL;
   opts.bin_size      = 0;
   opts.max_chr       = 100;

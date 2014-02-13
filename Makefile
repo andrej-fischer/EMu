@@ -1,6 +1,6 @@
 CC              = g++-mp-4.7
 GSL		= /opt/local/lib/libgsl.a /opt/local/lib/libgslcblas.a
-CC_FLAGS	= -Wall -O3 -DHAVE_INLINE -fopenmp 
+CC_FLAGS	= -Wall -O3 -DHAVE_INLINE -fopenmp -static-libgcc -static-libstdc++
 LD_FLAGS	= ${GSL} -fopenmp
 MAIN            = EMu
 MODEL		= MutSpecEM
@@ -13,7 +13,7 @@ all:  $(OBJECTS) $(PREPARE).o
 #
 $(PREPARE).o: $(PREPARE).cpp
 	$(CC) $(CC_FLAGS) -c $(PREPARE).cpp
-	$(CC) $(CC_FLAGS) $(PREPARE).o -o $(PREPARE) $(LD_FLAGS)
+	$(CC) $(CC_FLAGS) $(PREPARE).o -o ./build/$(PREPARE) $(LD_FLAGS)
 #
 $(MODEL).o: $(MODEL).cpp $(MODEL).h
 	$(CC) $(CC_FLAGS) -c $(MODEL).cpp

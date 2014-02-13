@@ -3,7 +3,8 @@
 v 1.5 / to come
 
 *  changed to static linking of GSL and stdlibc++
-* introduced `--opp human-genome` and `--opp human-exome`
+*  introduced `--opp human-genome` and `--opp human-exome`
+*  file open test in get_dims()
 
 v1.4 / 10.01.2014
 

@@ -8,7 +8,7 @@ The current stable release, including a pre-compiled executable of EMu for Mac O
 
 The main executable is called `EMu`. To test `EMu` type:
 
-`$ ./EMu --mut 21_breast_cancers.mutations --opp 21_breast_cancers.opportunity --pre ./test`
+`$ ./EMu --mut 21_breast_cancers.mutations.txt --opp 21_breast_cancers.opportunity.txt --pre ./test`
 
 # Compilation
 
@@ -27,7 +27,7 @@ Command line arguments:
 Required:
 * `--mut [file]`    The path to the flat text file of mutation counts (a Nsamples x Nchannels matrix)
 * `--opp [file]`    The path to the flat text file of mutational opportunities (a Nsamples x Nchannels matrix)
-* `--pre [path]`    The string to prefix the output files with (e.g. `./here/results`)
+* `--pre [path:./out]`    The string to prefix the output files with (e.g. `./here/results`)
 
 Optional:
 * `--force [int]`   Forces the program to use a specific number of processes for the fine search.

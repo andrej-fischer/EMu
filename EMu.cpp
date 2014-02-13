@@ -92,7 +92,7 @@ struct cmdl_opts{
   const char * prefix;
   int fNsp;
   int with_gspec, with_opp, with_gwts, mcmc, pseudo,freeze;
-  int hg,hex;
+  int hg_opp, hex_opp;
 };
 void get_opts( int argc, const char ** argv, cmdl_opts& opts);
 
@@ -156,7 +156,7 @@ int main(int argc, const char * argv[]){
       gsl_matrix_free(opp);
     }
   }
-  else if (opts.hg && Nch == 96){// Human Genome opportunity
+  else if (opts.hg_opp && Nch == 96){// Human Genome opportunity
     double HumGenOpp[96] = {
       1.14e+08,6.60e+07,1.43e+07,9.12e+07,//C>A @ AC[ACGT]
       1.05e+08,7.46e+07,1.57e+07,1.01e+08,//C>A @ CC[ACGT]
@@ -189,32 +189,32 @@ int main(int argc, const char * argv[]){
       }
     }
   }
-  else if (opts.hex && Nch == 96){// Human Exome opportunity
+  else if (opts.hex_opp && Nch == 96){// Human Exome opportunity
     double HumExOpp[96] = {
-      1.14e+08,6.60e+07,1.43e+07,9.12e+07,//C>A @ AC[ACGT]
-      1.05e+08,7.46e+07,1.57e+07,1.01e+08,//C>A @ CC[ACGT]
-      8.17e+07,6.76e+07,1.35e+07,7.93e+07,//C>A @ GC[ACGT]
-      1.11e+08,8.75e+07,1.25e+07,1.25e+08,//C>A @ TC[ACGT]
-      1.14e+08,6.60e+07,1.43e+07,9.12e+07,//C>G @ AC[ACGT]
-      1.05e+08,7.46e+07,1.57e+07,1.01e+08,//C>G @ CC[ACGT]
-      8.17e+07,6.76e+07,1.35e+07,7.93e+07,//C>G @ GC[ACGT]
-      1.11e+08,8.75e+07,1.25e+07,1.25e+08,//C>G @ TC[ACGT]
-      1.14e+08,6.60e+07,1.43e+07,9.12e+07,//C>T @ AC[ACGT]
-      1.05e+08,7.46e+07,1.57e+07,1.01e+08,//C>T @ CC[ACGT]
-      8.17e+07,6.76e+07,1.35e+07,7.93e+07,//C>T @ GC[ACGT]
-      1.11e+08,8.75e+07,1.25e+07,1.25e+08,//C>T @ TC[ACGT]
-      1.17e+08,7.57e+07,1.04e+08,1.41e+08,//T>A @ AC[ACGT]
-      7.31e+07,9.55e+07,1.15e+08,1.13e+08,//T>A @ CC[ACGT]
-      6.43e+07,5.36e+07,8.52e+07,8.27e+07,//T>A @ GC[ACGT]
-      1.18e+08,1.12e+08,1.07e+08,2.18e+08,//T>A @ TC[ACGT]
-      1.17e+08,7.57e+07,1.04e+08,1.41e+08,//T>C @ AC[ACGT]
-      7.31e+07,9.55e+07,1.15e+08,1.13e+08,//T>C @ CC[ACGT]
-      6.43e+07,5.36e+07,8.52e+07,8.27e+07,//T>C @ GC[ACGT]
-      1.18e+08,1.12e+08,1.07e+08,2.18e+08,//T>C @ TC[ACGT]
-      1.17e+08,7.57e+07,1.04e+08,1.41e+08,//T>G @ AC[ACGT]
-      7.31e+07,9.55e+07,1.15e+08,1.13e+08,//T>G @ AC[ACGT]
-      6.43e+07,5.36e+07,8.52e+07,8.27e+07,//T>G @ AG[ACGT]
-      1.18e+08,1.12e+08,1.07e+08,2.18e+08 //T>G @ AT[ACGT]
+      1940794, 1442408, 514826, 1403756,
+      2277398, 2318284, 774498, 2269674,
+      1740752, 1968596, 631872, 1734468,
+      1799540, 1910984, 398440, 2024770,
+      1940794, 1442408, 514826, 1403756,
+      2277398, 2318284, 774498, 2269674,
+      1740752, 1968596, 631872, 1734468,
+      1799540, 1910984, 398440, 2024770,
+      1940794, 1442408, 514826, 1403756,
+      2277398, 2318284, 774498, 2269674,
+      1740752, 1968596, 631872, 1734468,
+      1799540, 1910984, 398440, 2024770,
+      1299256, 1166912, 1555012, 1689928,
+      978400,  2119248, 2650754, 1684488,
+      884052,  1173252, 1993110, 1251508,
+      1391660, 1674368, 1559846, 2850934,
+      1299256, 1166912, 1555012, 1689928,
+      978400,  2119248, 2650754, 1684488,
+      884052,  1173252, 1993110, 1251508,
+      1391660, 1674368, 1559846, 2850934,
+      1299256, 1166912, 1555012, 1689928,
+      978400,  2119248, 2650754, 1684488,
+      884052,  1173252, 1993110, 1251508,
+      1391660, 1674368, 1559846, 2850934
     };
     for (int m=0; m<Nsa; m++){
       for (int j=0; j<Nch; j++){
@@ -395,6 +395,10 @@ int main(int argc, const char * argv[]){
 void get_dims(const char * infile_name, int * dim1, int * dim2){
   ifstream inf_str;
   inf_str.open(infile_name);
+  if (inf_str.fail()){
+    printf("ERROR: file %s cannot be opened.\n", infile_name);
+    exit(1);
+  }
   string line;
   double val=0;
   int line_ct=0, col_ct=0, old_col_ct=0;
@@ -465,8 +469,8 @@ void get_opts( int argc, const char ** argv, cmdl_opts& opts){
   opts.mcmc   = 0;
   opts.freeze   = 0;
   opts.pseudo = 0;
-  opts.hg=0;
-  opts.hex=0;
+  opts.hg_opp=0;
+  opts.hex_opp=0;
   // get the command line arguments...
   int opt_ind = 1;
   while( opt_ind < argc && (argv[opt_ind][0] == '-') ){ 
@@ -525,7 +529,7 @@ void get_opts( int argc, const char ** argv, cmdl_opts& opts){
       exit(0);
     }
     else{
-      cout<<"Usage: ./EMu --mut 21_breast_cancers.mutations --opp 21_breast_cancers.opportunity --pre ./target/test"<<endl;
+      cout<<"Usage: ./build/EMu --mut 21_breast_cancers.mutations.txt --opp 21_breast_cancers.opportunity.txt --pre ./target/test"<<endl;
       exit(1);
     }
     opt_ind++;

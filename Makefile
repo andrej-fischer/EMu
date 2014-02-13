@@ -13,7 +13,7 @@ all:  $(OBJECTS) $(PREPARE).o
 #
 $(PREPARE).o: $(PREPARE).cpp
 	$(CC) $(CC_FLAGS) -c $(PREPARE).cpp
-	$(CC) $(CC_FLAGS) $(PREPARE).o -o $(PREPARE) $(LD_FLAGS)
+	$(CC) $(CC_FLAGS) $(PREPARE).o -o ./build/$(PREPARE) $(LD_FLAGS)
 #
 $(MODEL).o: $(MODEL).cpp $(MODEL).h
 	$(CC) $(CC_FLAGS) -c $(MODEL).cpp

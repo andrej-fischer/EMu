@@ -92,6 +92,7 @@ struct cmdl_opts{
   const char * prefix;
   int fNsp;
   int with_gspec, with_opp, with_gwts, mcmc, pseudo,freeze;
+  int hg,hex;
 };
 void get_opts( int argc, const char ** argv, cmdl_opts& opts);
 
@@ -155,44 +156,74 @@ int main(int argc, const char * argv[]){
       gsl_matrix_free(opp);
     }
   }
-  else{
-    // Human Genome opportunity, if nothing was given...
-    if (Nch==96){
-      double HumOpp[96] = {
-	1.14e+08,6.60e+07,1.43e+07,9.12e+07,//C>A @ AC[ACGT]
-	1.05e+08,7.46e+07,1.57e+07,1.01e+08,//C>A @ CC[ACGT]
-	8.17e+07,6.76e+07,1.35e+07,7.93e+07,//C>A @ GC[ACGT]
-	1.11e+08,8.75e+07,1.25e+07,1.25e+08,//C>A @ TC[ACGT]
-	1.14e+08,6.60e+07,1.43e+07,9.12e+07,//C>G @ AC[ACGT]
-	1.05e+08,7.46e+07,1.57e+07,1.01e+08,//C>G @ CC[ACGT]
-	8.17e+07,6.76e+07,1.35e+07,7.93e+07,//C>G @ GC[ACGT]
-	1.11e+08,8.75e+07,1.25e+07,1.25e+08,//C>G @ TC[ACGT]
-	1.14e+08,6.60e+07,1.43e+07,9.12e+07,//C>T @ AC[ACGT]
-	1.05e+08,7.46e+07,1.57e+07,1.01e+08,//C>T @ CC[ACGT]
-	8.17e+07,6.76e+07,1.35e+07,7.93e+07,//C>T @ GC[ACGT]
-	1.11e+08,8.75e+07,1.25e+07,1.25e+08,//C>T @ TC[ACGT]
-	1.17e+08,7.57e+07,1.04e+08,1.41e+08,//T>A @ AC[ACGT]
-	7.31e+07,9.55e+07,1.15e+08,1.13e+08,//T>A @ CC[ACGT]
-	6.43e+07,5.36e+07,8.52e+07,8.27e+07,//T>A @ GC[ACGT]
-	1.18e+08,1.12e+08,1.07e+08,2.18e+08,//T>A @ TC[ACGT]
-	1.17e+08,7.57e+07,1.04e+08,1.41e+08,//T>C @ AC[ACGT]
-	7.31e+07,9.55e+07,1.15e+08,1.13e+08,//T>C @ CC[ACGT]
-	6.43e+07,5.36e+07,8.52e+07,8.27e+07,//T>C @ GC[ACGT]
-	1.18e+08,1.12e+08,1.07e+08,2.18e+08,//T>C @ TC[ACGT]
-	1.17e+08,7.57e+07,1.04e+08,1.41e+08,//T>G @ AC[ACGT]
-	7.31e+07,9.55e+07,1.15e+08,1.13e+08,//T>G @ AC[ACGT]
-	6.43e+07,5.36e+07,8.52e+07,8.27e+07,//T>G @ AG[ACGT]
-	1.18e+08,1.12e+08,1.07e+08,2.18e+08 //T>G @ AT[ACGT]
-      };
-      for (int m=0; m<Nsa; m++){
-	for (int j=0; j<Nch; j++){
-	  gsl_matrix_set( Opp, m, j, HumOpp[j]);
-	}
+  else if (opts.hg && Nch == 96){// Human Genome opportunity
+    double HumGenOpp[96] = {
+      1.14e+08,6.60e+07,1.43e+07,9.12e+07,//C>A @ AC[ACGT]
+      1.05e+08,7.46e+07,1.57e+07,1.01e+08,//C>A @ CC[ACGT]
+      8.17e+07,6.76e+07,1.35e+07,7.93e+07,//C>A @ GC[ACGT]
+      1.11e+08,8.75e+07,1.25e+07,1.25e+08,//C>A @ TC[ACGT]
+      1.14e+08,6.60e+07,1.43e+07,9.12e+07,//C>G @ AC[ACGT]
+      1.05e+08,7.46e+07,1.57e+07,1.01e+08,//C>G @ CC[ACGT]
+      8.17e+07,6.76e+07,1.35e+07,7.93e+07,//C>G @ GC[ACGT]
+      1.11e+08,8.75e+07,1.25e+07,1.25e+08,//C>G @ TC[ACGT]
+      1.14e+08,6.60e+07,1.43e+07,9.12e+07,//C>T @ AC[ACGT]
+      1.05e+08,7.46e+07,1.57e+07,1.01e+08,//C>T @ CC[ACGT]
+      8.17e+07,6.76e+07,1.35e+07,7.93e+07,//C>T @ GC[ACGT]
+      1.11e+08,8.75e+07,1.25e+07,1.25e+08,//C>T @ TC[ACGT]
+      1.17e+08,7.57e+07,1.04e+08,1.41e+08,//T>A @ AC[ACGT]
+      7.31e+07,9.55e+07,1.15e+08,1.13e+08,//T>A @ CC[ACGT]
+      6.43e+07,5.36e+07,8.52e+07,8.27e+07,//T>A @ GC[ACGT]
+      1.18e+08,1.12e+08,1.07e+08,2.18e+08,//T>A @ TC[ACGT]
+      1.17e+08,7.57e+07,1.04e+08,1.41e+08,//T>C @ AC[ACGT]
+      7.31e+07,9.55e+07,1.15e+08,1.13e+08,//T>C @ CC[ACGT]
+      6.43e+07,5.36e+07,8.52e+07,8.27e+07,//T>C @ GC[ACGT]
+      1.18e+08,1.12e+08,1.07e+08,2.18e+08,//T>C @ TC[ACGT]
+      1.17e+08,7.57e+07,1.04e+08,1.41e+08,//T>G @ AC[ACGT]
+      7.31e+07,9.55e+07,1.15e+08,1.13e+08,//T>G @ AC[ACGT]
+      6.43e+07,5.36e+07,8.52e+07,8.27e+07,//T>G @ AG[ACGT]
+      1.18e+08,1.12e+08,1.07e+08,2.18e+08 //T>G @ AT[ACGT]
+    };
+    for (int m=0; m<Nsa; m++){
+      for (int j=0; j<Nch; j++){
+	gsl_matrix_set( Opp, m, j, HumGenOpp[j]);
       }
     }
-    else{
-      gsl_matrix_set_all( Opp, 1.0);
+  }
+  else if (opts.hex && Nch == 96){// Human Exome opportunity
+    double HumExOpp[96] = {
+      1.14e+08,6.60e+07,1.43e+07,9.12e+07,//C>A @ AC[ACGT]
+      1.05e+08,7.46e+07,1.57e+07,1.01e+08,//C>A @ CC[ACGT]
+      8.17e+07,6.76e+07,1.35e+07,7.93e+07,//C>A @ GC[ACGT]
+      1.11e+08,8.75e+07,1.25e+07,1.25e+08,//C>A @ TC[ACGT]
+      1.14e+08,6.60e+07,1.43e+07,9.12e+07,//C>G @ AC[ACGT]
+      1.05e+08,7.46e+07,1.57e+07,1.01e+08,//C>G @ CC[ACGT]
+      8.17e+07,6.76e+07,1.35e+07,7.93e+07,//C>G @ GC[ACGT]
+      1.11e+08,8.75e+07,1.25e+07,1.25e+08,//C>G @ TC[ACGT]
+      1.14e+08,6.60e+07,1.43e+07,9.12e+07,//C>T @ AC[ACGT]
+      1.05e+08,7.46e+07,1.57e+07,1.01e+08,//C>T @ CC[ACGT]
+      8.17e+07,6.76e+07,1.35e+07,7.93e+07,//C>T @ GC[ACGT]
+      1.11e+08,8.75e+07,1.25e+07,1.25e+08,//C>T @ TC[ACGT]
+      1.17e+08,7.57e+07,1.04e+08,1.41e+08,//T>A @ AC[ACGT]
+      7.31e+07,9.55e+07,1.15e+08,1.13e+08,//T>A @ CC[ACGT]
+      6.43e+07,5.36e+07,8.52e+07,8.27e+07,//T>A @ GC[ACGT]
+      1.18e+08,1.12e+08,1.07e+08,2.18e+08,//T>A @ TC[ACGT]
+      1.17e+08,7.57e+07,1.04e+08,1.41e+08,//T>C @ AC[ACGT]
+      7.31e+07,9.55e+07,1.15e+08,1.13e+08,//T>C @ CC[ACGT]
+      6.43e+07,5.36e+07,8.52e+07,8.27e+07,//T>C @ GC[ACGT]
+      1.18e+08,1.12e+08,1.07e+08,2.18e+08,//T>C @ TC[ACGT]
+      1.17e+08,7.57e+07,1.04e+08,1.41e+08,//T>G @ AC[ACGT]
+      7.31e+07,9.55e+07,1.15e+08,1.13e+08,//T>G @ AC[ACGT]
+      6.43e+07,5.36e+07,8.52e+07,8.27e+07,//T>G @ AG[ACGT]
+      1.18e+08,1.12e+08,1.07e+08,2.18e+08 //T>G @ AT[ACGT]
+    };
+    for (int m=0; m<Nsa; m++){
+      for (int j=0; j<Nch; j++){
+	gsl_matrix_set( Opp, m, j, HumExOpp[j]);
+      }
     }
+  }
+  else{
+    gsl_matrix_set_all( Opp, 1.0);
   }
   // *** SCENARIO 1 ***
   // Read in externally supplied spectra and global weights to serve as prior...
@@ -434,6 +465,8 @@ void get_opts( int argc, const char ** argv, cmdl_opts& opts){
   opts.mcmc   = 0;
   opts.freeze   = 0;
   opts.pseudo = 0;
+  opts.hg=0;
+  opts.hex=0;
   // get the command line arguments...
   int opt_ind = 1;
   while( opt_ind < argc && (argv[opt_ind][0] == '-') ){ 
@@ -459,8 +492,17 @@ void get_opts( int argc, const char ** argv, cmdl_opts& opts){
     }
     else if (opt_switch == "--opp"){
       opt_ind++;
-      opts.opp_fn = argv[opt_ind];
-      opts.with_opp = 1;
+      opt_switch = argv[opt_ind];
+      if (opt_switch == "human-genome"){
+	opts.hg_opp   = 1;
+      }
+      else if (opt_switch == "human-exome"){
+	opts.hex_opp  = 1;
+      }
+      else{
+	opts.opp_fn = argv[opt_ind];
+	opts.with_opp = 1;
+      }
     }
     else if (opt_switch == "--spectra"){
       opt_ind++;
@@ -479,7 +521,7 @@ void get_opts( int argc, const char ** argv, cmdl_opts& opts){
     }
     else if (opt_switch == "--version"){
       opt_ind++;
-      cout<<"This is version 1.2 of EMu, an EM-algorithm for the inference of mutational signatures.\n";
+      cout<<"This EMu v1.5, an EM-algorithm for the inference of mutational signatures.\n";
       exit(0);
     }
     else{

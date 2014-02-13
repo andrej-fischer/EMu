@@ -116,7 +116,9 @@ Assuming `EMu-prepare` was called with `--cnv cnv.txt --mut mutations.txt`:
 * `cnv.txt.opp.sample`: The samples corresponding to each row in above file. 
 		    Check that this is the same order as in `mutations.txt.mut.samples`.
 
-## NOTE: In order to translate mutations to the 96 channels, `EMu-prepare` reads the bases 5' and 3' to the one given in a line of `mutations.txt` from the hard disk. It is very useful to sort the mutations file by chromosome and coordinate (otherwise the most time will be spent moving between physical locations in the hard disk). On UNIX, this can be achieved with:
+## NOTE:
+
+In order to translate mutations to the 96 channels, `EMu-prepare` reads the bases 5' and 3' to the one given in a line of `mutations.txt` from the hard disk. It is very useful to sort the mutations file by chromosome and coordinate (otherwise the most time will be spent moving between physical locations in the hard disk). On UNIX, this can be achieved with:
 
 `sort -k2n,2 -k3n,3 mutations.txt > mutations.sorted.txt`
 

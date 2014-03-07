@@ -22,14 +22,18 @@ To compile EMu yourself, you need to fulfill the following dependencies:
 
 # EMu usage
 
-Command line arguments: 
+##Command line arguments: 
 
-Required:
-* `--mut [file]`    The path to the flat text file of mutation counts (a Nsamples x Nchannels matrix)
-* `--opp [file]`    The path to the flat text file of mutational opportunities (a Nsamples x Nchannels matrix)
-* `--pre [path:./out]`    The string to prefix the output files with (e.g. `./here/results`)
+###Required:
+* `--mut [file]` The path to the flat text file of mutation counts (a Nsamples x Nchannels matrix)
 
-Optional:
+* `--opp [file/human-genome/human-exome]`  Specifies the mutational opportunity.
+
+  This can be either (i) the path to a flat text file of mutational opportunities (a Nsamples x Nchannels matrix) or (ii) `human-genome` to use the human whole genome opportunity for all samples or (iii) `human-exome` to use the whole human exome (female).
+
+* `--pre [path:./out]` The string to prefix the output files with (e.g. `./here/results`)
+
+###Optional:
 * `--force [int]`   Forces the program to use a specific number of processes for the fine search.
 
 * `--mcmc [int]`    Performs a MCMC sampling with the desired number of steps to probe the posterior probability 
@@ -44,14 +48,14 @@ Optional:
 	  	 activities per sample. Needs to be a (M x Nspectra) matrix, where Nsamples in --mut and --opp 
 		 needs to be a multiple of M.
                   
-# EMu output files:
+## EMu output files:
 
 * `^[pre]_[Nsp]_ml_spectra.txt`      - The spectra found in the data using EM (Nspectra x Nchannels matrix)
 * `^[pre]_[Nsp]_map_activities.txt`  - The activities found in the data using EM (Nsamples x Nspectra matrix)
 * `^[pre]_[Nsp]_assigned.txt`        - The mutations assigned to each process (Nsamples x Nspectra matrix).
 * `^[pre]_bic.txt`                   - The BIC values for the number of spectra tried.
 
-If MCMC was called:
+###If MCMC was called:
 * `^[pre]_[Nsp]_mcmc_spectra.txt`     - The posterior mean spectra found in the data using MCMC (Nspectra x Nchannels matrix)
 * `^[pre]_[Nsp]_mcmc_activities.txt`  - The posterior mean activities found in the data using MCMC (Nsamples x Nspectra matrix)
 * `^[pre]_[Nsp]_mcmc_err.txt`         - The posterior std.dev. for the spectra using MCMC (Nspectra x Nchannels matrix)
@@ -61,7 +65,7 @@ If MCMC was called:
 
 There is an additional program provided to create the input files for `EMu`: `EMu-prepare`
 
-Command line arguments for `EMu-prepare`:
+##Command line arguments for `EMu-prepare`:
 
 * `--mut [file]`   A flat text file with the mutations to be analysed. Each line describes one mutation (please see note below). 
 	Expected format:
@@ -100,7 +104,7 @@ Command line arguments for `EMu-prepare`:
 	    
 	    chromosome start stop
 
-# EMu-prepare output files
+## EMu-prepare output files
 
 Assuming `EMu-prepare` was called with `--cnv cnv.txt --mut mutations.txt`:
 
@@ -112,7 +116,9 @@ Assuming `EMu-prepare` was called with `--cnv cnv.txt --mut mutations.txt`:
 * `cnv.txt.opp.sample`: The samples corresponding to each row in above file. 
 		    Check that this is the same order as in `mutations.txt.mut.samples`.
 
-NOTE: In order to translate mutations to the 96 channels, `EMu-prepare` reads the bases 5' and 3' to the one given in a line of `mutations.txt` from the hard disk. It is very useful to sort the mutations file by chromosome and coordinate (otherwise the most time will be spent moving between physical locations in the hard disk). On UNIX, this can be achieved with:
+## NOTE:
+
+In order to translate mutations to the 96 channels, `EMu-prepare` reads the bases 5' and 3' to the one given in a line of `mutations.txt` from the hard disk. It is very useful to sort the mutations file by chromosome and coordinate (otherwise the most time will be spent moving between physical locations in the hard disk). On UNIX, this can be achieved with:
 
 `sort -k2n,2 -k3n,3 mutations.txt > mutations.sorted.txt`
 

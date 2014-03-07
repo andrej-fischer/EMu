@@ -88,6 +88,7 @@ sort -k2n,2 -k3n,3 mutations.txt > mutations.sorted.txt
 #include <ctype.h> 
 #include <string>
 #include <map>
+#include <set>
 #include <vector>
 #include <list>
 #include <limits>
@@ -343,6 +344,10 @@ void get_mut( cmdl_opts& opts,
   }
   int last=0,no_char=0,no_bins=0,no_bases=0,chn=0;
   unsigned int curr_bin=0;
+  char nucl [] = {'a','c','g','t'};
+  char Nucl [] = {'A','C','G','T','a','c','g','t'};
+  std::set<char> nt(nucl,nucl+4);
+  std::set<char> NT(Nucl,Nucl+8);
   // *** MUTATIONS ***
   //expects format 
   // sample chr coord A>G
@@ -409,8 +414,12 @@ void get_mut( cmdl_opts& opts,
     if (middle == '\n') (chr_ifs[chr]).get(middle);
     (chr_ifs[chr]).get(right);
     if (right == '\n') (chr_ifs[chr]).get(right);
+    if (nt.count(left))   left   -= 32; // convert to upper case
+    if (nt.count(middle)) middle -= 32; 
+    if (nt.count(right))  right  -= 32;
     //
-    if (middle != 'A' && middle != 'C' && middle != 'G' && middle != 'T'){
+    //if (middle != 'A' && middle != 'C' && middle != 'G' && middle != 'T'){
+    if ( NT.count(middle) == 0 ){
       printf("\nERROR: Mutation %s at position %i in chr %i in %s not possible! Reference is '%c'.\n",
 	     mut.c_str(), coord, chr+1, sample.c_str(), middle);
       line.clear();

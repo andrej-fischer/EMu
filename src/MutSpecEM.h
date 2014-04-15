@@ -1,6 +1,4 @@
-/* 
-MutSpecEM.h
-*/
+//MutSpecEM.h
 
 #include <iostream>
 #include <fstream>
@@ -10,6 +8,10 @@ MutSpecEM.h
 #include <stdio.h>
 #include <math.h>
 #include <ctype.h>
+
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 // GSL headers...
 #include "gsl/gsl_rng.h"

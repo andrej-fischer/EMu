@@ -1,30 +1,26 @@
-# EMu stable release
+# How to get the EMu software
 
-The current stable release, including a pre-compiled executable of EMu for Mac OS X (64bit), can be found on our [ftp](ftp://ftp.sanger.ac.uk/pub/teams/153/EMu/) site at: 
-
-`ftp://ftp.sanger.ac.uk/pub/teams/153/EMu/`
+The current stable release and a pre-compiled executable of EMu for Mac OS X (64bit), can be found [here](https://github.com/andrej-fischer/EMu/releases).
 
 # Test EMu
 
-The main executable is called `EMu`. To test `EMu` type:
+To test `EMu`, type the following on the command line while in the main directory.
 
 `$ ./build/EMu --mut 21_breast_cancers.mutations.txt --opp 21_breast_cancers.opportunity.txt --pre ./test`
 
 # Compilation
 
-To compile EMu yourself, you need to fulfill the following dependencies:
+To compile EMu yourself, you need an installation of the GNU scientific library ([GSL](http://www.gnu.org/software/gsl/), v14 or later). On a machine without admin rights, you might need to change the paths in the Makefile to point to your local installation of gsl, if they are not in `/usr/local/`.
+The software uses openMP. If you do not wish to use openMP, remove the `-fopenmp` flag in the Makefile.
 
-* A C++ compiler, such as g++. 
-* An installation of the GNU scientific library (v14 or later).
-* The software uses openMP. If you do not wish to use openMP, comment out the corresponding lines in MutSpecEM.cpp and in the Makefile.
-
-[If you try to compile EMu on a machine without admin rights, you might need to change the paths in the Makefile to point to your local installation of gsl, if they are not in `/usr/local/`. Then simply type 'make' on the command line, while in the source file directory.]
+Finally, simply type `make` on the command line.
 
 # EMu usage
 
-##Command line arguments: 
+## Command line arguments: 
 
-###Required:
+### Required
+
 * `--mut [file]` The path to the flat text file of mutation counts (a Nsamples x Nchannels matrix)
 
 * `--opp [file/human-genome/human-exome]`  Specifies the mutational opportunity.
@@ -33,7 +29,8 @@ To compile EMu yourself, you need to fulfill the following dependencies:
 
 * `--pre [path:./out]` The string to prefix the output files with (e.g. `./here/results`)
 
-###Optional:
+### Optional
+
 * `--force [int]`   Forces the program to use a specific number of processes for the fine search.
 
 * `--mcmc [int]`    Performs a MCMC sampling with the desired number of steps to probe the posterior probability 
@@ -55,7 +52,8 @@ To compile EMu yourself, you need to fulfill the following dependencies:
 * `^[pre]_[Nsp]_assigned.txt`        - The mutations assigned to each process (Nsamples x Nspectra matrix).
 * `^[pre]_bic.txt`                   - The BIC values for the number of spectra tried.
 
-###If MCMC was called:
+### If MCMC was called:
+
 * `^[pre]_[Nsp]_mcmc_spectra.txt`     - The posterior mean spectra found in the data using MCMC (Nspectra x Nchannels matrix)
 * `^[pre]_[Nsp]_mcmc_activities.txt`  - The posterior mean activities found in the data using MCMC (Nsamples x Nspectra matrix)
 * `^[pre]_[Nsp]_mcmc_err.txt`         - The posterior std.dev. for the spectra using MCMC (Nspectra x Nchannels matrix)
@@ -63,9 +61,9 @@ To compile EMu yourself, you need to fulfill the following dependencies:
 
 # EMu-prepare usage
 
-There is an additional program provided to create the input files for `EMu`: `EMu-prepare`
+There is an additional program provided to create the input files for `EMu`: `EMu-prepare`.
 
-##Command line arguments for `EMu-prepare`:
+## Command line arguments for `EMu-prepare`:
 
 * `--mut [file]`   A flat text file with the mutations to be analysed. Each line describes one mutation (please see note below). 
 	Expected format:
@@ -78,9 +76,9 @@ There is an additional program provided to create the input files for `EMu`: `EM
 	mutation: format A>T
 
 * `--chr [dir]`	A directory where the chromosome fasta files are located. Expected file name format: chr1.fa.
-	(Rename file names for chr X,Y,mt etc., e.g. chrX.fa -> chr23.fa.)
-	You can download the latest version of the human reference genome from:
-	http://www.ncbi.nlm.nih.gov/projects/genome/assembly/grc/
+	(Rename file names for chr X, Y, mt etc., e.g. chrX.fa -> chr23.fa.)
+	You can download the latest version of the human reference genome 
+        [here](http://www.ncbi.nlm.nih.gov/projects/genome/assembly/grc/).
 
 * `--cnv [file]` A flat file with all the copy number information. Each line is a non-standard copy number region. Format:
 
@@ -124,6 +122,6 @@ In order to translate mutations to the 96 channels, `EMu-prepare` reads the base
 
 # KNOWN BUGS
 
-There is a known bug when openMP is compiled with the Mac OS compiler gcc version 4.2.1, which leads to random `abort trap:6` crashes. If possible, compile with latest gcc version. Alternatively, you can set the number of threads manually to one via:
+There is a known bug when openMP is compiled with the Mac OS compiler gcc version 4.2.1, which leads to random `abort trap:6` crashes. If possible, compile with latest gcc version. Alternatively, you can remove the `-fopenmp` flag from the Makefile or set the number of threads manually to one via:
 
 `export OMP_NUM_THREADS=1; ./EMu --mut 21_breast_cancers.mutations --opp 21_breast_cancers.opportunity --pre ./target/test`

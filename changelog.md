@@ -1,6 +1,11 @@
 # changelog for EMu and EMu-prepare
 
-v 1.5 / 07.03.2014
+v1.5.1 / 15.04.2014
+
+* moved to MAJOR.MINOR.PATCH release numbering
+* modified REAME
+	
+v1.5 / 07.03.2014
 
 *  changed to static linking of GSL and stdlibc++
 *  introduced `--opp human-genome` and `--opp human-exome`

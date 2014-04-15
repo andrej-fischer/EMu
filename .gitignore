@@ -1,5 +1,5 @@
 *.[oa]
-build/
+build/*
 *~
 .DS_Store
 release/

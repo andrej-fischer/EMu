@@ -1,6 +1,4 @@
-/* 
-MutSpecEM.cpp
-*/
+//MutSpecEM.cpp
 
 #define PI 3.1415926
 
@@ -345,7 +343,9 @@ int MutSpecEM::get_weights_guess(){
   MutSpecEM::set_overlap();
   int m;
   int err=0;
+#ifdef _OPENMP
 #pragma omp parallel for schedule( dynamic,2) default(shared)
+#endif
   for (m=0; m<Nsa; m++){
     gsl_permutation * p = gsl_permutation_alloc(Nsp);
     int sign;
@@ -416,7 +416,9 @@ int MutSpecEM::get_weights_guess(){
 int MutSpecEM::get_spectra_guess(){
   int j;
   int err=0;
+#ifdef _OPENMP
 #pragma omp parallel for schedule( dynamic,2) default(shared)
+#endif
   for (j=0; j<Nch; j++){    
     gsl_permutation * p = gsl_permutation_alloc(Nsp);;
     int sign; 
@@ -491,8 +493,9 @@ void MutSpecEM::get_all_map_weights(int loud, int with_ps){
   // now loop over samples to find saddle points by numerical optimization...
   gsl_vector_set_zero(fexp);
   int m;
+#ifdef _OPENMP
 #pragma omp parallel for schedule( dynamic, 1) default(shared)
-  // START PARALLEL FOR
+#endif  // START PARALLEL FOR
   for (m=0; m<Nsa; m++){
     if (loud == 1 && (0 == m % 100 || m==Nsa-1))
       printf("\rMAP in sample %i of %i...", m+1, Nsa);
@@ -561,9 +564,10 @@ void MutSpecEM::get_all_map_weights(int loud, int with_ps){
 // update the mutation spectra with their MAP estimate...
 void MutSpecEM::get_all_map_spectra(int with_ps){
   int j;
-#pragma omp parallel for schedule( dynamic, 1) default(shared)
-  // START PARALLEL FOR
-  for (j=0; j<Nch; j++){
+#ifdef _OPENMP
+#pragma omp parallel for schedule( dynamic,2) default(shared)
+#endif
+  for (j=0; j<Nch; j++){// START PARALLEL FOR
     gsl_matrix * M = gsl_matrix_alloc(Nsp,Nsa);
     for (int a=0; a<Nsp; a++){
       for (int m=0; m<Nsa; m++){
@@ -1321,9 +1325,11 @@ double MutSpecEM::get_app_llhood(gsl_matrix * spectra_trial){
     exit(1);
   }
   int m=0;
-  //start OMP PARALLEL FOR LOOP
+#ifdef _OPENMP
 #pragma omp parallel for schedule( dynamic, 1) default(shared)
-  for (m=0; m<Nsa; m++){
+#endif
+  for (m=0; m<Nsa; m++){//START PARALLEL FOR
+    double lh=0;
     // allocate local variables...
     double norm, val;
     gsl_permutation * p = gsl_permutation_alloc(Nsp);
@@ -1353,18 +1359,12 @@ double MutSpecEM::get_app_llhood(gsl_matrix * spectra_trial){
       }
     }
     // Saddle Point Approximation to the log-likelihood...
-#pragma omp critical
-    {
-      llhood += (double) Nsp * log(2.0*PI) / 2.0;
-    }
+    lh += (double) Nsp * log(2.0*PI) / 2.0;
     // Subtract the function value at the saddle point..
     gsl_blas_dgemv( CblasNoTrans, 1.0, spectra_trial, &oppV.vector, 0.0, mem);
     gsl_vector_memcpy( grad, mem);
     gsl_blas_ddot( &wtsV.vector, mem, &val);
-#pragma omp critical
-    {
-      llhood -= val;
-    }
+    lh -= val;
     // pseudo-counts term...
     MutSpecEM::get_naive_ps_cts( pseudo, spectra_trial, &oppV.vector);
     for (int a=0; a<Nsp; a++){
@@ -1386,12 +1386,9 @@ double MutSpecEM::get_app_llhood(gsl_matrix * spectra_trial){
 	}
       }
     }
-#pragma omp critical
-    {
-      llhood += incr;
-      // factorials...
-      llhood -= gsl_vector_get( factorials, m);
-    }
+    lh += incr;
+    // factorials...
+    lh -= gsl_vector_get( factorials, m);
     // now calculate the gradient of f...
     for (int a=0; a<Nsp; a++){
       val = gsl_vector_get(grad,a);
@@ -1436,20 +1433,14 @@ double MutSpecEM::get_app_llhood(gsl_matrix * spectra_trial){
     else{
       // Hessian term: log det(Hess)
       val = (double) (gsl_linalg_LU_lndet( Hess) + Nsp * log(Hmax));
-#pragma omp critical
-      {
-	llhood -= 0.5*val;
-      }
+      lh -= 0.5*val;
       // gradient term... 
       // using: log(grad^T Hess^{-1} grad) = log(y^T Hess^T y), with Hess y = grad
       gsl_linalg_LU_solve( Hess, p, grad, y);
       gsl_vector_memcpy(grad,y);
       gsl_blas_dgemv(CblasTrans,1.0,Hess,y,0.0,mem);
       gsl_blas_ddot( grad, mem, &val);
-#pragma omp critical
-      {
-	llhood += 0.5*val / Hmax;
-      }
+      lh += 0.5*val / Hmax;
     }
     // cleanup local variables...
     gsl_permutation_free(p);
@@ -1461,6 +1452,12 @@ double MutSpecEM::get_app_llhood(gsl_matrix * spectra_trial){
     gsl_vector_free(grad);
     gsl_vector_free(mem);
     gsl_vector_free(y);
+#ifdef _OPENMP
+#pragma omp critical
+#endif
+    {
+      llhood += lh;
+    }
   }  
   // return
   return(llhood);

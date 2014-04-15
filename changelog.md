@@ -4,7 +4,8 @@ v1.5.1 / 15.04.2014
 
 * moved to MAJOR.MINOR.PATCH release numbering
 * modified REAME
-	
+* conditional openMP compilation
+
 v1.5 / 07.03.2014
 
 *  changed to static linking of GSL and stdlibc++

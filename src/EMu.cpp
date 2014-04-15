@@ -6,7 +6,7 @@ Copyright (c) 09-16-13  Genome Research Ltd.
 
 Author: Andrej Fischer (af7[at]sanger.ac.uk)
 
-This file is part of EMu v1.4
+This file is part of EMu
 
 EMu is free software: you can redistribute it and/or modify it under the terms of the 
 GNU General Public License as published by the Free Software Foundation; either version 3 
@@ -22,40 +22,6 @@ If not, see <http://www.gnu.org/licenses/>.
 
 ******************************************************************************
 
-EMu.cpp
-
-A program to infere mutational process signatures via the Expectation Maximization algorithm.
-
-Command line arguments: 
-
-Required:
---mut [file]    - The path to the flat text file of mutation counts (a Nsamples x Nchannels matrix)
---opp [file]    - The path to the flat text file of mutational opportunities (a Nsamples x Nchannels matrix)
---pre [path]    - The string to prefix the output files with (e.g. ./here/results)
-Optional:
---force [int]   - Forces the program to use a specific number of processes for the fine search.
-
---mcmc [int]    - Performs a MCMC sampling with the desired number of steps to probe the posterior probability distribution
-                  for the mutational signatures and fidn thus error estimates.
---freeze [int]  - Performs zero-temperature Simulated-Annealing after convergence of the EM alorithm.
-
---spectra [file] - Supply a matrix of mutational spectra (Nspectra x Nchannels matrix) to be used for the inference of activities.
-                   No EM will be performed. Only activities per sample will be inferred and the mutations assigned.
---weights [file] - Supply a matrix of process activities to be used as an informed prior for the inference of activities per sample.
-                   Needs to be a (M x Nspectra) matrix, where Nsamples in --mut and --opp needs to be a multiple of M.
-                  
-Output files:
-
-^[pre]_[Nsp]_ml_spectra.txt      - The spectra found in the data using EM (Nspectra x Nchannels matrix)
-^[pre]_[Nsp]_map_activities.txt  - The activities found in the data using EM (Nsamples x Nspectra matrix)
-^[pre]_[Nsp]_assigned.txt        - The mutations assigned to each process (Nsamples x Nspectra matrix).
-^[pre]_bic.txt                   - The BIC values for the number of spectra tried.
-
-If MCMC was called:
-^[pre]_[Nsp]_mcmc_spectra.txt     - The posterior mean spectra found in the data using MCMC (Nspectra x Nchannels matrix)
-^[pre]_[Nsp]_mcmc_activities.txt  - The posterior mean activities found in the data using MCMC (Nsamples x Nspectra matrix)
-^[pre]_[Nsp]_mcmc_err.txt         - The posterior std.dev. for the spectra using MCMC (Nspectra x Nchannels matrix)
-
 */
 
 // General headers...
@@ -69,7 +35,6 @@ If MCMC was called:
 #include <ctype.h>
 #include <unistd.h>
 #include <stdlib.h>
-
 
 // GSL headers...
 #include "gsl/gsl_vector.h"

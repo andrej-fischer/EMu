@@ -6,7 +6,7 @@ Copyright (c) 09-16-13  Genome Research Ltd.
 
 Author: Andrej Fischer (af7[at]sanger.ac.uk)
 
-This file is part of EMu v1.4
+This file is part of EMu
 
 EMu is free software: you can redistribute it and/or modify it under the terms of the 
 GNU General Public License as published by the Free Software Foundation; either version 3 
@@ -18,63 +18,6 @@ See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with this program.  
 If not, see <http://www.gnu.org/licenses/>.
-
-
-******************************************************************************
-
-EMu-prepare.cpp: preparing the input files for Emu
-
-Command line options for EMu-prepare:
-
---mut   A flat text file with the mutations to be analysed. Each line describes one mutation (please see note below). 
-	Expected format:
-	 
-	sample chromosome coordinate mutation
-	
-	sample: identifier for each sample (no white space)
-	chomosome: integer (rename X=23,Y=24,mt=25 etc.)
-	coordinate: one-based integer chomosome coordinate
-	mutation: format A>T
-
---chr	A directory where the chromosome fasta files are located. Expected file name format: chr1.fa.
-	(Rename file names for chr X,Y,mt etc., e.g. chrX.fa -> chr23.fa.)
-	You can download the latest version of the human reference genome from:
-	http://www.ncbi.nlm.nih.gov/projects/genome/assembly/grc/
-
---cnv 	A flat file with all the copy number information. Each line is a non-standard copy number region. Format:
-
-	sample chromosome start stop multiplier
-	
-	sample: identifier for each sample (no white space)
-	chomosome: integer (rename X=23,Y=24,mt=25 etc.)
-	start: chromosome start coordinate of cnv region
-	stop:  chromosome stop coordinate of cnv region (if -1, then extends to the end of the chromosome)	
-	multiplier: integer (in this region, this multiplier is used to integrate the opportunity)
-
-	Note: the default multiplier is 2. This can be changed with --default [int].
-	If a sample has no copy number changes, still include at least one dummy line for consideration.
-
---pre	A path for the bin-wise output files. Since there will be one file for each sample and each chr, 
-	it is a good idea to send them to a directory.
-
---bin	The size of the non-overlapping windows for which to get mutational/opportunity data.
-
---regions   A file with explicit regions to include exclusively. One region per line. Format:
-	    
-	    chromosome start stop
-
-Output files: assuming EMu-prepare was called with --cnv cnv.txt --mut mutations.txt:
-
-mutations.txt.96: The same as mutations.txt with the mutation channel appended at the end of each line.
-mutations.txt.mut.matrix: A matrix of mutation counts with no. samples rows and 96 columns. Suitable for EMu.
-mutations.txt.mut.samples: The samples corresponding to each row in above file.
-
-cnv.txt.opp.matrix: A matrix of opportunity counts with no. samples rows and 96 columns. Suitable for EMu.
-cnv.txt.opp.sample: The samples corresponding to each row in above file. 
-		    Check that this is the same order as in mutations.txt.mut.samples.
-
-NOTE: In order to translate mutations to the 96 channels, EMu-prepare reads the bases 5' and 3' to the one given in a line of mutations.txt from the hard disk. It is very useful to sort the mutations file by chromosome and coordinate (otherwise the most time will be spent moving between physical locations in the hard disk). On UNIX, this can be achieved with:
-sort -k2n,2 -k3n,3 mutations.txt > mutations.sorted.txt
 
 */
 
@@ -92,6 +35,10 @@ sort -k2n,2 -k3n,3 mutations.txt > mutations.sorted.txt
 #include <vector>
 #include <list>
 #include <limits>
+
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 
 // GSL headers...
@@ -212,7 +159,8 @@ void get_opts( int argc, const char ** argv, cmdl_opts& opts){
       opts.cnv_def = atoi( argv[opt_idx]);
     }
     else {
-      cout << "Usage: TBD" << endl;
+      cout<<"ERROR: unexpected option "<< opt_switch <<endl;
+      cout << "For usage, see README" << endl;
       exit(1);
     }
     opt_switch.clear();
@@ -618,7 +566,9 @@ void get_opp( map<char,char>& base_idx,
   }
   //
   // *** CHROMOSOMES ***
+#ifdef _OPENMP
 #pragma omp parallel for schedule( dynamic,1) default(shared)
+#endif
   for(chr = 0; chr < opts.no_chr; chr++){
     // skip if no regions in this chromosome
     if (opts.reg_file_name != NULL){
@@ -642,7 +592,9 @@ void get_opp( map<char,char>& base_idx,
     no_bases = no_char - int((double) no_char / (stride[chr]+1));//new-line chars don't count!
     //exit(0);
     gsl_matrix * OppTrack = NULL; 
+#ifdef _OPENMP
 #pragma omp critical
+#endif
     {
       printf("Computing all opportunity for chr %2i (%i bases)", chr+1, no_bases);
       if (opts.bin_size>0){
@@ -760,7 +712,9 @@ void get_opp( map<char,char>& base_idx,
       middle = right;
     } 
     // Now collect the opportunity in this chromosome...
+#ifdef _OPENMP
 #pragma omp critical
+#endif
     {
       for (int s=0; s<no_samples; s++){
 	for (int j=0; j<no_chn; j++){

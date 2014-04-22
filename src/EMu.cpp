@@ -187,7 +187,7 @@ int main(int argc, const char * argv[]){
       }
     }
   }
-  else{
+  else{//flat opportunity...
     gsl_matrix_set_all( Opp, 1.0);
   }
   // *** SCENARIO 1 ***
@@ -215,7 +215,7 @@ int main(int argc, const char * argv[]){
     if ( opts.with_gwts == 1){
       get_dims( opts.gwts_fn, &Npat, &Nsp);
       if ( (Nsa % Npat) != 0 ){
-	printf("The number of samples (%i) is not a multiple of the number of patients (%i).\n",Nsa,Npat);
+	printf("The number of lines (%i) is not a multiple of the number of samples (%i).\n",Nsa,Npat);
 	exit(1);
       }
       else{

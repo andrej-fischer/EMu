@@ -1,5 +1,10 @@
 # changelog for EMu and EMu-prepare
 
+v1.5.2 / to come
+
+*  bug fix in EMu-prepare: `--bin` now accepts `1e5` notation
+*  changed EMu-prepare localized output to `pre.sample.opp.chr23.per-1Mb.txt` etc. 
+
 v1.5.1 / 15.04.2014
 
 * moved to MAJOR.MINOR.PATCH release numbering

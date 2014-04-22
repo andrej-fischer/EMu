@@ -54,6 +54,7 @@ struct cmdl_opts{
   const char * pre;
   const char * suff;
   const char * chr_dir;
+  string bin_str;
   int bin_size, max_chr, no_chr, cnv_def;
 };
 
@@ -152,7 +153,7 @@ void get_opts( int argc, const char ** argv, cmdl_opts& opts){
     } 
     else if ( opt_switch.compare("--bin") == 0){
       opt_idx++;
-      opts.bin_size = atoi( argv[opt_idx]);
+      opts.bin_size = int(atof( argv[opt_idx]));
     }
     else if ( opt_switch.compare("--default") == 0){
       opt_idx++;
@@ -172,13 +173,24 @@ void get_opts( int argc, const char ** argv, cmdl_opts& opts){
     exit(1);
   }
   if (opts.cnv_file_name == NULL && opts.chr_dir == NULL){
-    cout<<"ERROR: for mutational opportunity, you have to set --cnv [cnf_file] and --chr [dir]\n";
+    cout<<"ERROR: for mutational opportunity, you have to set --cnv [cnv_file] and --chr [dir]\n";
     exit(1);
   }
   if (opts.reg_file_name != NULL && opts.bin_size > 0 ){
     cout<<"ERROR: you have to decide whether to get data per bin genome wide (with --bin [size]) ";
     cout<<"OR whether to get data collapsed over specific regions (with --regions [reg_file])\n";
     exit(1);
+  }
+  if (opts.bin_size>0){
+    char buff[128];
+    sprintf( buff, "per-%ib", opts.bin_size);
+    opts.bin_str.assign(buff);
+    int bs = opts.bin_size;
+    if (bs == 1000)     opts.bin_str = "per-1kb";
+    if (bs == 10000)    opts.bin_str = "per-10kb";
+    if (bs == 100000)   opts.bin_str = "per-100kb";
+    if (bs == 1000000)  opts.bin_str = "per-1Mb";
+    if (bs == 10000000) opts.bin_str = "per-10Mb";
   }
 }
 
@@ -258,13 +270,12 @@ void get_regions( vector<int> * region_start,
 }
 
 
-
+//*******************************************************************************************
 // translate mutation information to the 96 tri-nucleotide channel format...
 void get_mut( cmdl_opts& opts,
 	      map<string,char>& mut_idx, 
 	      map<char,char>& base_idx
 	      ){
-  //
   int no_chn = 96;
   ifstream * chr_ifs = new ifstream [opts.max_chr];
   int * start        = new int [opts.max_chr];
@@ -432,10 +443,11 @@ void get_mut( cmdl_opts& opts,
     for (it = mut_per_bin.begin(); it != mut_per_bin.end(); ++it){
       for (int chr=0; chr<opts.no_chr; chr++){
 	string out_fn(opts.pre);
+	out_fn.append(".");
 	out_fn.append(it->first);
 	out_fn.append(".mut.");
 	char chrbuff [32];
-	sprintf( chrbuff, "chr%i.%i.dat", chr+1, opts.bin_size);
+	sprintf( chrbuff, "chr%i.%s.txt", chr+1, opts.bin_str.c_str());
 	out_fn.append(chrbuff);
 	FILE * out_fp = fopen(out_fn.c_str(),"w");
 	for (int bin=0; bin<(int) (it->second)[chr]->size1; bin++){
@@ -460,7 +472,7 @@ void get_mut( cmdl_opts& opts,
 }
 
 
-
+//*******************************************************************************************
 // translate sequences to opportunity tracks, i.e. which mutational channels are open...
 void get_opp( map<char,char>& base_idx, 
 	      cmdl_opts& opts
@@ -509,8 +521,8 @@ void get_opp( map<char,char>& base_idx,
       cnv_mult.insert(pair<string,vector<int>*>(sample,mults));
       if (opts.pre != NULL){
 	string ofn(opts.pre);
+	ofn.append(".");
 	ofn.append(sample);
-	ofn.append(".opp.");
 	sample_fn.insert(pair<string,string>(sample,ofn));
       }
     }
@@ -729,7 +741,7 @@ void get_opp( map<char,char>& base_idx,
       for ( int s=0; s< no_samples; s++){
 	string fn = sample_fn[samples[s]];
 	char chrbuff [32];
-	sprintf( chrbuff, "chr%i.%i.dat", chr+1, opts.bin_size);
+	sprintf( chrbuff, ".opp.chr%i.%s.txt", chr+1, opts.bin_str.c_str());
 	fn.append(chrbuff);
 	FILE * track_fp = fopen( fn.c_str(), "w");
 	// BINS:
